@@ -32,9 +32,9 @@ if __name__ == '__main__':
     
     #fname = '/Volumes/rescomp1/data/denoising_data/drosophila_eggs/train/1b/1b_t44.tif'
     #fname = '/Volumes/rescomp1/data/denoising_data/drosophila_eggs/train/6a_z002/6a_t035_z002.tif'
-    fname = '/Volumes/rescomp1/data/denoising_data/drosophila_eggs/train/3b/3b_t110.tif'
+    #fname = '/Volumes/rescomp1/data/denoising_data/drosophila_eggs/train/3b/3b_t110.tif'
     #fname = '/Volumes/rescomp1/data/denoising_data/drosophila_eggs/test/1a/1a_t01.tif'
-    #fname = '/Volumes/rescomp1/data/denoising_data/drosophila_eggs/test/1a/1a_t01.tif'
+    fname = '/Volumes/rescomp1/data/denoising_data/drosophila_eggs/test/1a/1a_t01.tif'
     
     #%%
     img = cv2.imread(fname, -1)

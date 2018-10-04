@@ -123,7 +123,7 @@ def train(
     log_dir = log_dir_root / bn
     logger = SummaryWriter(log_dir = str(log_dir))
     
-    #%%
+    
     best_loss = 1e10
     pbar_epoch = tqdm.trange(n_epochs)
     for epoch in pbar_epoch:

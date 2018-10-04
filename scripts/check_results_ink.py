@@ -24,20 +24,19 @@ if __name__ == '__main__':
     n_ch  = 1
      
     #model_path = log_dir_root_dflt / 'inked_slides_l1smooth_20181003_232406_unet-3ch_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
-    #model_path = log_dir_root_dflt / 'inked_slides_l1smooth_20181004_093656_unet-ch4_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
-    model_path = log_dir_root_dflt / 'inked_slides_l1smooth_20181004_100258_unet-ch4_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    model_path = log_dir_root_dflt / 'inked_slides_l1smooth_20181004_093656_unet-ch4_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    #model_path = log_dir_root_dflt / 'inked_slides_l1smooth_20181004_100258_unet-ch4_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
     
     
     
     scale_log = (0, 255)
     n_ch = 4
     
-    #gen = SyntheticFluoFlow()
     model = UNet(n_channels = n_ch, n_classes = n_ch)
     state = torch.load(model_path, map_location = 'cpu')
     model.load_state_dict(state['state_dict'])
     model.eval()
-    #%%
+    
     
     #fname = '/Users/avelinojaver/OneDrive - Nexus365/inked_slides/Tile003873.jpg'
     fname = '/Users/avelinojaver/OneDrive - Nexus365/inked_slides/fake.jpg'
@@ -56,8 +55,9 @@ if __name__ == '__main__':
     
     xhat = Xhat.squeeze().detach().numpy()
     
-
+#%%
     xhat_r = np.rollaxis(xhat, 0, start=3)
+    xhat_r = np.clip(xhat_r, 0, 1)
     xhat_r = cmyk_rgb(xhat_r)
     
     xr = np.rollaxis(x, 0, start=3)
