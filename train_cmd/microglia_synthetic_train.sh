@@ -9,9 +9,8 @@ echo "********"
 source activate pytorch-v0.4.0-cuda8.0-venv
 cd /users/rittscher/avelino/GitLab/noise2noise/scripts
 
-
-SRC_DIR=/users/rittscher/avelino/workspace/denoising_data/c_elegans/train/
-DST_DIR=$TMPDIR/ramdisk/c_elegans
+SRC_DIR=/users/rittscher/avelino/workspace/denoising_data/microglia/syntetic_data/
+DST_DIR=$TMPDIR/ramdisk/microglia_synthetic
 rsync -avz $SRC_DIR $DST_DIR
 
-python train_model.py --batch_size 16  --data_type 'worms' --data_src_dir $DST_DIR
+python train_model.py --batch_size 16  --data_type 'microglia_synthetic' --data_src_dir $DST_DIR

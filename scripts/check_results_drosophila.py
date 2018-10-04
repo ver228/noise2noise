@@ -21,6 +21,7 @@ import cv2
 #%%
 if __name__ == '__main__':
     model_path = log_dir_root_dflt / 'drosophila_eggs_l1smooth_20181003_004605_unet_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    model_path = log_dir_root_dflt / 'drosophila-eggs_l1smooth_20181003_134919_unet_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
     scale_log = (0, 16)
     
     

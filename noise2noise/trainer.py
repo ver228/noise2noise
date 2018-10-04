@@ -8,7 +8,7 @@ Created on Fri Aug 17 16:46:42 2018
 
 from pathlib import Path 
 
-from .flow import BasicFlow
+from .flow import BasicFlow, SyntheticFluoFlow, InkedFlow
 from .models import UNet
 
 from tensorboardX import SummaryWriter
@@ -38,28 +38,49 @@ def get_loss(loss_type):
         criterion = nn.MSELoss()
     else:
         raise ValueError(loss_type)
-    
     return criterion
 
 def get_model(model_name):
     if model_name == 'unet':
         model = UNet(n_channels = 1, n_classes = 1)
+    elif model_name == 'unet-ch3':
+        model = UNet(n_channels = 3, n_classes = 3)
+    elif model_name == 'unet-ch4':
+        model = UNet(n_channels = 4, n_classes = 4)
     else:
         raise ValueError(model_name)
     return model
 
-def get_flow(data_type):
-    if data_type == 'drosophila_eggs':
-        src_root_dir = Path.home() / 'workspace/denoising_data/drosophila_eggs/train'
-        gen = BasicFlow(src_root_dir, is_log_transform = True, scale_int = (0, 16), cropping_size=128)
-    if data_type == 'drosophila-eggs-N':
-        src_root_dir = Path.home() / 'workspace/denoising_data/drosophila_eggs/train'
-        gen = BasicFlow(src_root_dir, is_log_transform = False, scale_int = (0, 2**16-1), cropping_size=128)
+def get_flow(data_type, src_root_dir = None):
+    def _get_dir(_src_dir):
+        if src_root_dir is None:
+            return _src_dir
+        else:
+            return src_root_dir
+            
+    if data_type == 'drosophila-eggs':
+        src_dir = Path.home() / 'workspace/denoising_data/drosophila_eggs/train'
+        gen = BasicFlow(_get_dir(src_dir), is_log_transform = True, scale_int = (0, 16), cropping_size=128)
+        
+    elif data_type == 'drosophila-eggs-N':
+        src_dir = Path.home() / 'workspace/denoising_data/drosophila_eggs/train'
+        gen = BasicFlow(_get_dir(src_dir), is_log_transform = False, scale_int = (0, 2**16-1), cropping_size=128)
+        
     elif data_type == 'worms':
-        src_root_dir = Path.home() / 'workspace/denoising_data/c_elegans/train'
-        gen = BasicFlow(src_root_dir, is_log_transform = False, scale_int = (0, 255))
+        src_dir = Path.home() / 'workspace/denoising_data/c_elegans/train'
+        gen = BasicFlow(_get_dir(src_dir), is_log_transform = False, scale_int = (0, 255))
+
+    elif data_type == 'microglia_synthetic':
+        src_dir = Path.home() / 'workspace/denoising_data/microglia/syntetic_data'
+        gen = SyntheticFluoFlow(_get_dir(src_dir))
+    
+    elif data_type == 'inked_slides':
+        src_dir = Path.home() / 'workspace/denoising_data/inked_slides'
+        gen = InkedFlow(_get_dir(src_dir))
     else:
         raise ValueError(data_type)
+    
+    print(src_root_dir)
     return gen
 
 def train(
@@ -74,6 +95,7 @@ def train(
         n_epochs = 2000,
         num_workers = 1,
         is_to_align = False,
+        data_src_dir = None
         ):
     
     if torch.cuda.is_available():
@@ -83,7 +105,7 @@ def train(
         dev_str = 'cpu'
     device = torch.device(dev_str)
     
-    gen = get_flow(data_type)
+    gen = get_flow(data_type, data_src_dir)
     loader = DataLoader(gen, batch_size=batch_size, shuffle=True, num_workers=num_workers)
     
     model = get_model(model_name)
