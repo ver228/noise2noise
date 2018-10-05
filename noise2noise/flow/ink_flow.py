@@ -15,23 +15,33 @@ import random
 _root_dir = Path('/Users/avelinojaver/OneDrive - Nexus365/inked_slides/')
 #_root_dir = Path.home() / 'workspace/denoising_data/inked_slides'
 
-def rgb_cmyk(x):
-    x = x.astype(np.float32)/255.
-    K = 1 - x.max(axis=-1)
-    N = (1 - x - K[..., None])/(1 - K[..., None]+ 1e-8)
-    return np.concatenate((N, K[..., None]), axis=2)
+#def rgb_cmyk(x):
+#    x = x.astype(np.float32)
+#    K = 1 - x.max(axis=-1)
+#    N = (1 - x - K[..., None])/(1 - K[..., None]+ 1e-8)
+#    return np.concatenate((N, K[..., None]), axis=2)
+#
+#def cmyk_rgb(x):
+#    K = x[..., -1]
+#    N = x[..., :-1]
+#    x_rgb = 1 - N*(1-K[..., None]) -  K[..., None]
+#    return x_rgb
 
-def cmyk_rgb(x):
-    K = x[..., -1]
-    N = x[..., :-1]
-    x_rgb = 1 - N*(1-K[..., None]) -  K[..., None]
-    return x_rgb
+def rgb_cmy(x):
+    x = x.astype(np.float32)
+    return 1-x
+
+def cmy_rgb(x):
+    x = x.astype(np.float32)
+    return 1-x
+
 
 class InkedFlow(Dataset):
     def __init__(self, 
                  root_dir = _root_dir,
                  crop_size = 256,
-                 samples_per_epoch = 1000
+                 samples_per_epoch = 1000,
+                 return_rgb = False
                  ):
         print(root_dir)
         root_dir = Path(root_dir)
@@ -39,19 +49,27 @@ class InkedFlow(Dataset):
         self.ink_dir = root_dir / 'ink'
         self.crop_size = crop_size 
         self.samples_per_epoch = samples_per_epoch
+        self.return_rgb = return_rgb
+        
         
         self.clean_files = [x for x in self.clean_dir.glob('*.jpg') if not x.name.startswith('.')]
         self.ink_files =  [x for x in self.ink_dir.glob('*.jpg') if not x.name.startswith('.')]
+        
+        
+        self.img_clean = cv2.imread(str(self.clean_files[0]), -1)[..., ::-1]/255
+        self.img_ink = cv2.imread(str(self.ink_files[0]), -1)[..., ::-1]/255
+        
         
     def __len__(self):
         return self.samples_per_epoch
     
     def __getitem__(self, ind):
         clean_file = random.choice(self.clean_files)
-        img_clean = cv2.imread(str(clean_file), -1)[..., ::-1]
+        #img_clean = cv2.imread(str(clean_file), -1)[..., ::-1]/255
+        img_clean = self.img_clean
         
         clean_crop = self._augment(img_clean, self.crop_size, self.crop_size)
-        clean_crop = rgb_cmyk(clean_crop)
+        clean_crop = rgb_cmy(clean_crop)
         
         out1 = self._add_ink(clean_crop.copy())
         out2 = self._add_ink(clean_crop.copy())
@@ -63,24 +81,35 @@ class InkedFlow(Dataset):
         
     def _add_ink(self, clean_crop):
         ink_file = random.choice(self.ink_files)
-        img_ink = cv2.imread(str(ink_file), -1)[..., ::-1]
+        #img_ink = cv2.imread(str(ink_file), -1)[..., ::-1]/255
+        img_ink = self.img_ink
         
-        nn = random.randint(0, 3)
+        nn = random.randint(0, 2)
         
         for _ in range(nn):
             crop_x = random.randint(self.crop_size//4, self.crop_size)
             crop_y = random.randint(self.crop_size//4, self.crop_size)
             ink_crop = self._augment(img_ink, crop_x, crop_y)
             
-            ink_crop = rgb_cmyk(ink_crop)
+            ink_crop = rgb_cmy(ink_crop)
             
             w,h, _ = clean_crop.shape
             wc, hc, _ = ink_crop.shape
             ix = random.randint(0, w - wc)
             iy = random.randint(0, h - hc)
             
-            clean_crop[ix:ix+wc, iy:iy+hc] += ink_crop
+            rand_factor = 0.4*np.random.random_sample(3)+0.8
+            ch_l = [0,1,2]
+            random.shuffle(ch_l)
+            ink_crop = ink_crop[..., ch_l]*rand_factor[None, None]
+            
+            #factor = 1.
+            factor = random.choice((1., -1.))
+            clean_crop[ix:ix+wc, iy:iy+hc] += factor*ink_crop
+        
+        clean_crop = cmy_rgb(clean_crop)
         clean_crop = np.clip(clean_crop, 0., 1.)
+            
         
         return clean_crop
         
@@ -104,7 +133,7 @@ class InkedFlow(Dataset):
 
 class InkedFlowBG(InkedFlow):
     def __getitem__(self, ind):
-        clean_crop = np.zeros((self.crop_size, self.crop_size, 4), np.float32)
+        clean_crop = np.full((self.crop_size, self.crop_size, 4), 0.5, np.float32)
         
         out1 = self._add_ink(clean_crop.copy())
         
@@ -116,18 +145,18 @@ class InkedFlowBG(InkedFlow):
     
 #%%
 if __name__ == '__main__':
-    gen = InkedFlow()
+    gen = InkedFlow(return_rgb =True)
     for _ in range(10):
         fig, axs = plt.subplots(1,2, sharex=True, sharey=True)
         
         for ii, x in enumerate(gen[0]):
             img = np.rollaxis(x, 0, start=3)
-            img = cmyk_rgb(img)
+            #img = cmyk_rgb(img)
             axs[ii].imshow(img)
     
-#    #%%
+    #%%
 #    import tqdm
-#    crop_size  = 1578
+#    crop_size  = 128
 #    gen = InkedFlowBG(crop_size=crop_size)
 #    
 #    avg_img = np.zeros((crop_size, crop_size, 4), np.float32)
@@ -135,7 +164,7 @@ if __name__ == '__main__':
 #    for _ in tqdm.tqdm(range(N)):
 #        avg_img += gen[0]
 #    avg_img /= N
-#    #%%
+#    
 #    fig, axs = plt.subplots(1,1, sharex=True, sharey=True)
 #    
 #    img_r = cmyk_rgb(avg_img)

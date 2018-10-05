@@ -34,10 +34,24 @@ if __name__ == '__main__':
     #fname = '/Volumes/rescomp1/data/denoising_data/c_elegans/test/Lidia/MaskedVideos/Optogenetics-day1/AQ2050-EtOH_Set1_Ch1_18072017_163921/15.tif'
     #fname = '/Volumes/rescomp1/data/denoising_data/c_elegans/test/Pratheeban/First_Set/MaskedVideos/Old_Adult/16_07_14/S3_ELA_1.0_Ch1_14072016_184723/1.tif'
     #fname = '/Volumes/rescomp1/data/denoising_data/c_elegans/test/Serena_WT_Screening/MaskedVideos/agg_15.2_180304/15.2_3_da609_Set0_Pos0_Ch5_04032018_120310/10.tif'
-    fname = '/Volumes/rescomp1/data/denoising_data/c_elegans/test/Drug_Screening/MaskedVideos/MK_Amisulpride_Chlopromazine_230817_N2/N2_worms10_Chlopromazine_10_Set4_Pos5_Ch2_23082017_190422/4.tif'
+    #fname = '/Volumes/rescomp1/data/denoising_data/c_elegans/test/Drug_Screening/MaskedVideos/MK_Amisulpride_Chlopromazine_230817_N2/N2_worms10_Chlopromazine_10_Set4_Pos5_Ch2_23082017_190422/4.tif'
     
-    img = cv2.imread(fname, -1)[..., ::-1]
+    fname = '/Users/avelinojaver/OneDrive - Imperial College London/documents/papers_in_progress/paper_tierpsy_tracker/figures_data/different_setups/pycelegans/RawVideos/NT00029_cam1_W001_110722_1649_cam1_M00001/NT00029_cam1_W001_110722_1649_cam1_M00001_frame00000_0000000.jpg'
+    
+    img = cv2.imread(fname, -1)
+    cv2.resize(img, dsize = tuple([x//4 for x in img.shape]))
+    
     img = img[None]
+    
+    #%%
+#    import tables
+#    #fname = '/Users/avelinojaver/OneDrive - Imperial College London/tierpsy_examples/tierpsy_test_data/different_animals/worm_motel/MaskedVideos/Position5_Ch2_12012017_100957_s.hdf5'
+#    fname = '/Users/avelinojaver/OneDrive - Imperial College London/tierpsy_examples/tierpsy_test_data/test_5/CSTCTest_Ch1_18112015_075624.hdf5'
+#    with tables.File(fname, 'r') as fid:
+#        img = fid.get_node('/full_data')[0]
+#        img = img[None]
+    #%%
+    
     
     x = img.astype(np.float32)
     

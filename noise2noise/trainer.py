@@ -9,7 +9,7 @@ Created on Fri Aug 17 16:46:42 2018
 from pathlib import Path 
 
 from .flow import BasicFlow, SyntheticFluoFlow, InkedFlow
-from .models import UNet
+from .models import UNet, L0AnnelingLoss
 
 from tensorboardX import SummaryWriter
 import torch
@@ -36,6 +36,8 @@ def get_loss(loss_type):
         criterion = nn.SmoothL1Loss()
     elif loss_type == 'l2':
         criterion = nn.MSELoss()
+    elif loss_type == 'l0anneling':
+        criterion = L0AnnelingLoss(anneling_rate=1/50)
     else:
         raise ValueError(loss_type)
     return criterion
@@ -76,7 +78,7 @@ def get_flow(data_type, src_root_dir = None):
     
     elif data_type == 'inked_slides':
         src_dir = Path.home() / 'workspace/denoising_data/inked_slides'
-        gen = InkedFlow(_get_dir(src_dir))
+        gen = InkedFlow(_get_dir(src_dir))     
     else:
         raise ValueError(data_type)
     
