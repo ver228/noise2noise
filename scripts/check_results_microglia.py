@@ -33,12 +33,12 @@ if __name__ == '__main__':
     model.eval()
     #%%
     #fname = '/Users/avelinojaver/OneDrive - Nexus365/microglia/data/stills/2018.08.22_stills/180822_MicVid_40X_Stills/180822_MicVid_40X_Stills_20X_Stills_10pcPower_1/N - 6(fld 1- time 1 - 22858 ms).tif'
-    fname = '/Users/avelinojaver/OneDrive - Nexus365/microglia/data/stills/2018.08.22_stills/180822_MicVid_40X_Stills/180822_MicVid_40X_Stills_20X_Stills_10pcPower_1/J - 7(fld 1- time 1 - 35958 ms).tif'
+    #fname = '/Users/avelinojaver/OneDrive - Nexus365/microglia/data/stills/2018.08.22_stills/180822_MicVid_40X_Stills/180822_MicVid_40X_Stills_20X_Stills_10pcPower_1/J - 7(fld 1- time 1 - 35958 ms).tif'
     #fname = '/Users/avelinojaver/OneDrive - Nexus365/microglia/data/stills/2018.08.22_stills/180822_MicVid_40X_Stills/180822_MicVid_40X_Stills_20X_Stills_10pcPower_1/L - 8(fld 1- time 1 - 71667 ms).tif'
     #fname = '/Users/avelinojaver/OneDrive - Nexus365/microglia/data/stills/2018.08.22_stills/180815_MicVid_20X_Stills/180815_MicVid_20X_Stills_20X_Still_InjectionWells_2/J - 8(fld 8).tif'
     #fname = '/Users/avelinojaver/OneDrive - Nexus365/microglia/data/stills/2018.08.20_stills/180815_MicVid_20X_Stills/B - 9(fld 1 z 1- time 1 - 109319 ms).tif'
     #fname = '/Users/avelinojaver/OneDrive - Nexus365/microglia/data/stills/2018.08.20_stills/180815_MicVid_20X_Stills/B - 6(fld 1 z 3- time 1 - 684 ms).tif'
-    #fname = '/Users/avelinojaver/OneDrive - Nexus365/microglia/data/stills/2018.08.20_stills/180815_MicVid_20X_Stills/D - 8(fld 1 z 2- time 1 - 59803 ms).tif'
+    fname = '/Users/avelinojaver/OneDrive - Nexus365/microglia/data/stills/2018.08.20_stills/180815_MicVid_20X_Stills/D - 8(fld 1 z 2- time 1 - 59803 ms).tif'
     
     #blurred
     #fname = '/Users/avelinojaver/OneDrive - Nexus365/microglia/data/stills/2018.08.22_stills/180822_MicVid_40X_Stills/180822_MicVid_40X_Stills_20X_Stills_10pcPower_ZTest_1/H - 10(fld 1 z 10- time 3 - 50106 ms).tif'
@@ -65,7 +65,7 @@ if __name__ == '__main__':
     
     fig, axs = plt.subplots(1,3,sharex=True, sharey=True)
     
-    axs[0].imshow(xr)#, vmin=0, vmax=1)
-    axs[1].imshow(xhat)#, vmin=0, vmax=1)
-    axs[2].imshow(xhat>0.3)
+    axs[0].imshow(xr, cmap='gray')#, vmin=0, vmax=1)
+    axs[1].imshow(xhat, cmap='gray')#, vmin=0, vmax=1)
+    axs[2].imshow(xhat>0.33)
     

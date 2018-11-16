@@ -21,35 +21,50 @@ import numpy as np
 import cv2
 #%%
 if __name__ == '__main__':
-    n_ch  = 1
-     
-    #model_path = log_dir_root_dflt / 'inked_slides_l1smooth_20181003_232406_unet-3ch_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
-    #model_path = log_dir_root_dflt / 'inked_slides_l1smooth_20181004_093656_unet-ch4_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
-    #model_path = log_dir_root_dflt / 'inked_slides_l1smooth_20181004_100258_unet-ch4_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    #tiny symetric color augmented rgb clipped 0,1
+    #model_path = log_dir_root_dflt / 'inked_slides/tiny/inked_slides_l1_20181005_154601_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    #model_path = log_dir_root_dflt / 'inked_slides/tiny/R_inked_slides_l1_20181010_073730_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    #model_path = log_dir_root_dflt / 'inked_slides/tiny/R_inked-slides-clipped_l1_20181012_111351_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
     
-    #model_path = log_dir_root_dflt / 'inked_slides_l1smooth_20181004_205913_unet-ch4_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
-    #model_path = log_dir_root_dflt / 'inked_slides_l1smooth_20181004_212303_unet-ch4_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
-    #model_path = log_dir_root_dflt / 'inked_slides_l1smooth_20181004_214553_unet-ch4_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
-    
-    #model_path = log_dir_root_dflt / 'inked_slides_l2_20181004_220027_unet-ch4_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
-    #model_path = log_dir_root_dflt / 'inked_slides_l1_20181004_220232_unet-ch4_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    #model_path = log_dir_root_dflt / 'tiny-inked-clipped_l1_20181026_150019_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    #model_path = log_dir_root_dflt / 'tiny-inked-cmy-randclip_l1_20181026_163230_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    #model_path = log_dir_root_dflt / 'tiny-inked-cmy_l1_20181026_163228_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    #model_path = log_dir_root_dflt / 'tiny-inked_l1_20181026_163230_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
     
     
-    #only pos switch color channels + random intensities
-    #model_path = log_dir_root_dflt / 'inked_slides_l1smooth_20181005_113342_unet-ch4_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
-    #model_path = log_dir_root_dflt / 'inked_slides_l0anneling_20181005_113940_unet-ch4_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    #tiny symetric color augmented rgb no clipped (faster flow)
+    #model_path = log_dir_root_dflt / 'inked_slides/tiny/inked_slides_l1_20181012_101949_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
     
-    #only pos and negative switch color channels + random intensities
-    #model_path = log_dir_root_dflt / 'inked_slides_l1_20181005_115745_unet-ch4_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
-    #model_path = log_dir_root_dflt / 'inked_slides_l0anneling_20181005_120410_unet-ch4_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
-    #model_path = log_dir_root_dflt / 'inked_slides_l1smooth_20181005_132332_unet-ch4_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    #full asymetric
+    #model_path = log_dir_root_dflt / 'inked_slides/inked-slides-clipped_l1smooth_20181005_173844_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    #model_path = log_dir_root_dflt / 'inked_slides/inked-slides-clipped_l1_20181012_101513_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
     
-    #no symetric color augmented rgb
-    #model_path = log_dir_root_dflt / 'inked_slides_l1_20181005_151524_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    #full symetric
+    #model_path = log_dir_root_dflt / 'inked_slides/inked_slides_l1smooth_20181005_191658_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    #model_path = log_dir_root_dflt / 'inked_slides/inked_slides_l1_20181006_075234_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
     
-    #symetric color augmented rgb
-    #model_path = log_dir_root_dflt / 'inked_slides_l1_20181005_153004_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
-    model_path = log_dir_root_dflt / 'inked_slides_l1_20181005_154601_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    
+    #model_path = log_dir_root_dflt / 'inked-slides-cmy_l1_20181026_222127_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    #model_path = log_dir_root_dflt / 'inked-slides-cmy-randclip_l1_20181026_222127_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    
+    #model_path = log_dir_root_dflt / 'R_inked-slides-cmy-randclip_l1_20181028_105836_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    
+    #inked2clean
+    #model_path = log_dir_root_dflt / 'tiny-inked2real_l1_20181029_161716_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    #model_path = log_dir_root_dflt / 'tiny-inked2real_l1smooth_20181029_161716_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    #model_path = log_dir_root_dflt / 'tiny-inked2real_l2_20181029_161716_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    #model_path = log_dir_root_dflt / 'tiny-inked2real_bootpixl2_20181029_174432_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    
+    #model_path = log_dir_root_dflt / 'inked2real_l1_20181029_213925_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    #model_path = log_dir_root_dflt / 'inked2real_l1smooth_20181029_213925_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    
+    
+    #model_path = log_dir_root_dflt / 'R_inked2real_l1_20181030_150946_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    model_path = log_dir_root_dflt / 'R_inked2real_bootpixl2_20181030_134605_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    #model_path = log_dir_root_dflt / 'R_inked2real_l2_20181030_135222_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    
+    
+    
     
     scale_log = (0, 255)
     n_ch = 3
@@ -59,18 +74,32 @@ if __name__ == '__main__':
     model.load_state_dict(state['state_dict'])
     model.eval()
     
+    is_cmy = '-cmy' in model_path.parent.name
     #%%
-    #fname = '/Users/avelinojaver/OneDrive - Nexus365/inked_slides/Tile003873.jpg'
-    #fname = '/Users/avelinojaver/OneDrive - Nexus365/inked_slides/Tile003991.jpg'
-    fname = '/Users/avelinojaver/OneDrive - Nexus365/inked_slides/fake.jpg'
     
+    #fname = '/Users/avelinojaver/OneDrive - Nexus365/inked_slides/samples/Tile004515.jpg'
+    #fname = '/Users/avelinojaver/OneDrive - Nexus365/inked_slides/samples/Tile000341.jpg'
+    #fname = '/Users/avelinojaver/OneDrive - Nexus365/inked_slides/samples/Tile003586.jpg'
+    #fname = '/Users/avelinojaver/OneDrive - Nexus365/inked_slides/test_ISBI/Tile004500.jpg'
+    
+    #fname = '/Users/avelinojaver/OneDrive - Nexus365/inked_slides/tiny/fakes/fake.jpg'
+    #fname = '/Users/avelinojaver/OneDrive - Nexus365/inked_slides/tiny/fakes/1.jpg'
+    #fname = '/Users/avelinojaver/OneDrive - Nexus365/inked_slides/tiny/fakes/2.jpg'
+    fname = '/Users/avelinojaver/OneDrive - Nexus365/inked_slides/tiny/fakes/3.jpg'
+    
+    #fname = '/Users/avelinojaver/OneDrive - Nexus365/inked_slides/tiny/Tile003873.jpg'
+    #fname = '/Users/avelinojaver/OneDrive - Nexus365/inked_slides/tiny/Tile003991.jpg'
+    
+    
+     
     x = cv2.imread(fname, -1)[..., ::-1]/255
-    
     #x = rgb_cmy(x)
-    #%%
+    
     x = x.astype(np.float32)
     x = np.rollaxis(x, 2, start=0)
     
+    if is_cmy:
+        x = 1 - x
     
     with torch.no_grad():
         X = torch.from_numpy(x[None])
@@ -78,40 +107,28 @@ if __name__ == '__main__':
     
     xhat = Xhat.squeeze().detach().numpy()
     
-#%%
+    
     xhat_r = np.rollaxis(xhat, 0, start=3)
     xhat_r = np.clip(xhat_r, 0, 1)
-    #xhat_r = cmy_rgb(xhat_r)
     
+    #xhat_r = cmy_rgb(xhat_r)
     xr = np.rollaxis(x, 0, start=3)
+    
+    if is_cmy:
+        xhat_r = 1 - xhat_r
+        xr = 1- xr
+    #%%
     #xr = cmy_rgb(xr)
     
+    #real_fname = '/Users/avelinojaver/OneDrive - Nexus365/inked_slides/clean/Tile001421.jpg'
+    #img_real = cv2.imread(real_fname, -1)[..., ::-1].astype(np.float32)/255
     
-    real_fname = '/Users/avelinojaver/OneDrive - Nexus365/inked_slides/clean/Tile001421.jpg'
-    img_real = cv2.imread(real_fname, -1)[..., ::-1].astype(np.float32)/255
-    #%%
-#    with torch.no_grad():
-#        Xbase = model(torch.zeros(X.shape))
-#    
-#    xbase = Xbase.squeeze().detach().numpy()
-#    
-#    rr = xhat-xbase
-#    
-#    rr = np.rollaxis(rr, 0, start=3)
-#    rr = np.clip(rr, 0, 1)
-#    
-#    rr = cmy_rgb(rr)
-#    #plt.imshow(rr)
-#    xhat_r = rr
-#    
-    #%%
-    
-    fig, axs = plt.subplots(1,3,sharex=True, sharey=True)
+    fig, axs = plt.subplots(1,2,sharex=True, sharey=True)
     
     axs[0].imshow(xr)#, vmin=0, vmax=1)
     axs[0].set_title('input')
     axs[1].imshow(xhat_r)#, vmin=0, vmax=1)
     axs[1].set_title('output')
-    axs[2].imshow(img_real)
-    axs[2].set_title('ground truth')
+    #axs[2].imshow(img_real)
+    #axs[2].set_title('ground truth')
     

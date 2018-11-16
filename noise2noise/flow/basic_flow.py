@@ -125,17 +125,24 @@ class BasicFlow(Dataset):
 
 if __name__ == '__main__':
     
-    src_root_dir = Path.home() / 'workspace/WormData/full_images/'
-    src_root_dir = Path.home() / 'workspace/drosophila_eggs/'
-    
-    
-    
-    #gen = BasicFlow(file_lists, is_log_transform = False, scale_int = (0, 255))
-    gen = BasicFlow(src_root_dir, is_log_transform = True, scale_int = (0, 16), cropping_size=128)
+    #src_root_dir = Path.home() / 'workspace/WormData/full_images/'
+    #src_root_dir = Path.home() / 'workspace/drosophila_eggs/'
+    src_root_dir = Path.home() / 'workspace/denoising_data/c_elegans/train'
+        
+    #%%
+    gen = BasicFlow(src_root_dir, is_log_transform = False, scale_int = (0, 255))
+    #gen = BasicFlow(src_root_dir, is_log_transform = True, scale_int = (0, 16), cropping_size=128)
     #%%
     for kk in range(10):
         X, Y = gen[kk]
-        fig, axs = plt.subplots(1,3, sharex=True, sharey=True)
-        axs[0].imshow(X[0], cmap='gray', interpolation='None')
-        axs[1].imshow(Y[0], cmap='gray', interpolation='None')
-        axs[2].imshow((X-Y)[0],  interpolation='None')
+        fig, axs = plt.subplots(1,2, sharex=True, sharey=True)
+        vmax = max(X.max(), Y.max())
+        vmin = min(X.min(), Y.min())
+        
+        axs[0].imshow(X[0], vmin=0, vmax=1, cmap='gray', interpolation='None')
+        axs[1].imshow(Y[0], vmin=0, vmax=1, cmap='gray', interpolation='None')
+        
+        for ax in axs:
+            ax.axis('off')
+        
+        #axs[2].imshow((X-Y)[0],  interpolation='None')

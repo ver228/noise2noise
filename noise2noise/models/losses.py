@@ -7,7 +7,7 @@ Created on Sun Aug 19 10:27:31 2018
 """
 
 from torch import nn
-
+import torch
 class L0AnnelingLoss(nn.Module):
     def __init__(self, anneling_rate=1/50):
         super().__init__()
@@ -24,3 +24,16 @@ class L0AnnelingLoss(nn.Module):
         
         return ((input_v-target).abs() + self._eps).pow(gamma).sum()
 
+
+
+class BootstrapedPixL2(nn.Module):
+    '''bootstrapped pixel-wise L2 loss'''
+    def __init__(self, bootstrap_factor=4):
+        super().__init__()
+        self.bootstrap_factor = bootstrap_factor
+        
+    def forward(self, input_v, target):
+        mat_l2 = torch.pow(input_v-target,2)
+        mat_l2 = mat_l2.view(mat_l2.shape[0],-1)
+        out, _ = torch.topk(mat_l2, 4, dim=1)
+        return out.sum()

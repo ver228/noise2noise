@@ -5,11 +5,13 @@ Created on Fri Aug 17 16:46:42 2018
 
 @author: avelinojaver
 """
+import multiprocessing as mp
+mp.set_start_method('spawn', force=True)
 
 from pathlib import Path 
 
 from .flow import BasicFlow, SyntheticFluoFlow, InkedFlow
-from .models import UNet, L0AnnelingLoss
+from .models import UNet, L0AnnelingLoss, BootstrapedPixL2
 
 from tensorboardX import SummaryWriter
 import torch
@@ -38,6 +40,9 @@ def get_loss(loss_type):
         criterion = nn.MSELoss()
     elif loss_type == 'l0anneling':
         criterion = L0AnnelingLoss(anneling_rate=1/50)
+    elif loss_type == 'bootpixl2':
+        criterion = BootstrapedPixL2(bootstrap_factor=4)
+    
     else:
         raise ValueError(loss_type)
     return criterion
@@ -59,7 +64,7 @@ def get_flow(data_type, src_root_dir = None):
             return _src_dir
         else:
             return src_root_dir
-            
+    print(data_type)
     if data_type == 'drosophila-eggs':
         src_dir = Path.home() / 'workspace/denoising_data/drosophila_eggs/train'
         gen = BasicFlow(_get_dir(src_dir), is_log_transform = True, scale_int = (0, 16), cropping_size=128)
@@ -76,9 +81,45 @@ def get_flow(data_type, src_root_dir = None):
         src_dir = Path.home() / 'workspace/denoising_data/microglia/syntetic_data'
         gen = SyntheticFluoFlow(_get_dir(src_dir))
     
+    elif data_type == 'inked-slides-cmy':
+        src_dir = Path.home() / 'workspace/denoising_data/inked_slides'
+        gen = InkedFlow(_get_dir(src_dir), is_clipped=False, is_return_rgb=False)
+        
+    elif data_type == 'inked-slides-cmy-randclip':
+        src_dir = Path.home() / 'workspace/denoising_data/inked_slides'
+        gen = InkedFlow(_get_dir(src_dir), is_random_clipped=True, is_return_rgb=False)
+        
     elif data_type == 'inked_slides':
         src_dir = Path.home() / 'workspace/denoising_data/inked_slides'
-        gen = InkedFlow(_get_dir(src_dir))     
+        gen = InkedFlow(_get_dir(src_dir))
+    elif data_type == 'inked-slides-clipped':
+        src_dir = Path.home() / 'workspace/denoising_data/inked_slides'
+        gen = InkedFlow(_get_dir(src_dir), is_clipped=True)
+    elif data_type == 'inked2real':
+        src_dir = Path.home() / 'workspace/denoising_data/inked_slides'
+        gen = InkedFlow(
+                    is_clean_output = True, is_symetric_ink=False, 
+                    is_clipped=True, is_return_rgb=True)
+    
+    elif data_type == 'tiny-inked-clipped':
+        src_dir = Path.home() / 'workspace/denoising_data/inked_slides'
+        gen = InkedFlow(_get_dir(src_dir), is_clipped=True,  is_tiny=True, is_preload=True)
+    elif data_type == 'tiny-inked':
+        src_dir = Path.home() / 'workspace/denoising_data/inked_slides'
+        gen = InkedFlow(_get_dir(src_dir), is_clipped=False,  is_tiny=True, is_preload=True)
+    elif data_type == 'tiny-inked-cmy':
+        src_dir = Path.home() / 'workspace/denoising_data/inked_slides'
+        gen = InkedFlow(_get_dir(src_dir), is_clipped=False, is_return_rgb=False, is_tiny=True, is_preload=True)
+    elif data_type == 'tiny-inked-cmy-randclip':
+        src_dir = Path.home() / 'workspace/denoising_data/inked_slides'
+        gen = InkedFlow(_get_dir(src_dir), is_random_clipped=True, is_return_rgb=False, is_tiny=True, is_preload=True)
+    
+    elif data_type == 'tiny-inked2real':
+        src_dir = Path.home() / 'workspace/denoising_data/inked_slides'
+        
+        gen = InkedFlow(is_tiny=True, is_preload=True, 
+                    is_clean_output = True, is_symetric_ink=False, 
+                    is_clipped=True, is_return_rgb=True)
     else:
         raise ValueError(data_type)
     
@@ -97,7 +138,8 @@ def train(
         n_epochs = 2000,
         num_workers = 1,
         is_to_align = False,
-        data_src_dir = None
+        data_src_dir = None,
+        init_model_path = None
         ):
     
     if torch.cuda.is_available():
@@ -118,10 +160,24 @@ def train(
     model_params = filter(lambda p: p.requires_grad, model.parameters())
     optimizer = torch.optim.Adam(model_params, lr = lr, weight_decay=weight_decay)
     
-    
     now = datetime.datetime.now()
     bn = now.strftime('%Y%m%d_%H%M%S') + '_' + model_name
     bn = '{}_{}_{}_{}_lr{}_wd{}_batch{}'.format(data_type, loss_type, bn, 'adam', lr, weight_decay, batch_size)
+
+    epoch_init = 0 #useful to keep track in restarted models
+    if init_model_path:
+        #load weights
+        init_model_path = Path(init_model_path)
+        if not init_model_path.exists():
+            init_model_path = log_dir_root / init_model_path
+        state = torch.load(str(init_model_path), map_location = dev_str)
+        model.load_state_dict(state['state_dict'])
+        optimizer.load_state_dict(state['optimizer'])
+        epoch_init = state['epoch']
+        
+        bn = 'R_' + bn
+        print('{} loaded...'.format(init_model_path))
+
     log_dir = log_dir_root / bn
     logger = SummaryWriter(log_dir = str(log_dir))
     
@@ -164,7 +220,7 @@ def train(
         pbar_epoch.set_description(desc = desc, refresh=False)
         
         state = {
-                'epoch': epoch,
+                'epoch': epoch + epoch_init,
                 'state_dict': model.state_dict(),
                 'optimizer' : optimizer.state_dict(),
             }

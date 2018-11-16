@@ -10,8 +10,8 @@ source activate pytorch-v0.4.0-cuda8.0-venv
 cd /users/rittscher/avelino/GitLab/noise2noise/scripts
 
 
-SRC_DIR=/users/rittscher/avelino/workspace/denoising_data/c_elegans/train/
-DST_DIR=$TMPDIR/ramdisk/c_elegans
+SRC_DIR=/users/rittscher/avelino/workspace/denoising_data/inked_slides/
+DST_DIR=$TMPDIR/ramdisk/inked_slides
 rsync -avz $SRC_DIR $DST_DIR
 
-python train_model.py --batch_size 16  --data_type 'worms' --data_src_dir $DST_DIR --loss_type 'l1' --lr 1e-5
+python train_model.py --data_type "inked_slides" --model_name "unet-ch3" --loss_type 'l1' --data_src_dir $DST_DIR --n_epochs 5000
