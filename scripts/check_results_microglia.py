@@ -21,10 +21,9 @@ import cv2
 #%%
 if __name__ == '__main__':
     n_ch  = 1
-    #model_path = log_dir_root_dflt / 'synthetic_20x_l1_20180930_175913_unet_adam_lr0.0001_wd0.0_batch8' / 'checkpoint.pth.tar'
-    model_path = log_dir_root_dflt / 'microglia_synthetic_l1smooth_20181003_161017_unet_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    model_path = log_dir_root_dflt / 'mnist-fg-fix_l2_20190125_215745_unet_adam_lr1e-05_wd0.0_batch15' / 'checkpoint.pth.tar'
     
-    scale_log = (0, 16)
+    #scale_log = (0, 16)
     
     #gen = SyntheticFluoFlow()
     model = UNet(n_channels = n_ch, n_classes = n_ch)

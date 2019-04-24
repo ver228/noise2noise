@@ -59,9 +59,10 @@ if __name__ == '__main__':
     #model_path = log_dir_root_dflt / 'inked2real_l1smooth_20181029_213925_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
     
     
+    #best!!
     #model_path = log_dir_root_dflt / 'R_inked2real_l1_20181030_150946_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
-    model_path = log_dir_root_dflt / 'R_inked2real_bootpixl2_20181030_134605_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
-    #model_path = log_dir_root_dflt / 'R_inked2real_l2_20181030_135222_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    #model_path = log_dir_root_dflt / 'R_inked2real_bootpixl2_20181030_134605_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
+    model_path = log_dir_root_dflt / 'R_inked2real_l2_20181030_135222_unet-ch3_adam_lr0.0001_wd0.0_batch16' / 'checkpoint.pth.tar'
     
     
     
@@ -85,10 +86,10 @@ if __name__ == '__main__':
     #fname = '/Users/avelinojaver/OneDrive - Nexus365/inked_slides/tiny/fakes/fake.jpg'
     #fname = '/Users/avelinojaver/OneDrive - Nexus365/inked_slides/tiny/fakes/1.jpg'
     #fname = '/Users/avelinojaver/OneDrive - Nexus365/inked_slides/tiny/fakes/2.jpg'
-    fname = '/Users/avelinojaver/OneDrive - Nexus365/inked_slides/tiny/fakes/3.jpg'
+    #fname = '/Users/avelinojaver/OneDrive - Nexus365/inked_slides/tiny/fakes/3.jpg'
     
     #fname = '/Users/avelinojaver/OneDrive - Nexus365/inked_slides/tiny/Tile003873.jpg'
-    #fname = '/Users/avelinojaver/OneDrive - Nexus365/inked_slides/tiny/Tile003991.jpg'
+    fname = '/Users/avelinojaver/OneDrive - Nexus365/inked_slides/tiny/Tile003991.jpg'
     
     
      

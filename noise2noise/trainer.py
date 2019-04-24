@@ -10,7 +10,7 @@ mp.set_start_method('spawn', force=True)
 
 from pathlib import Path 
 
-from .flow import BasicFlow, SyntheticFluoFlow, InkedFlow
+from .flow import BasicFlow, SyntheticFluoFlow, InkedFlow, FromTableFlow, MNISTFashionFlow
 from .models import UNet, L0AnnelingLoss, BootstrapedPixL2
 
 from tensorboardX import SummaryWriter
@@ -77,6 +77,11 @@ def get_flow(data_type, src_root_dir = None):
         src_dir = Path.home() / 'workspace/denoising_data/c_elegans/train'
         gen = BasicFlow(_get_dir(src_dir), is_log_transform = False, scale_int = (0, 255))
 
+    elif data_type == 'bertie_worms':
+        src_dir = Path.home() / 'workspace/denoising_data/bertie_c_elegans/'
+        gen = FromTableFlow(_get_dir(src_dir), is_log_transform = False, scale_int = (0, 255))
+        
+        
     elif data_type == 'microglia_synthetic':
         src_dir = Path.home() / 'workspace/denoising_data/microglia/syntetic_data'
         gen = SyntheticFluoFlow(_get_dir(src_dir))
@@ -120,6 +125,30 @@ def get_flow(data_type, src_root_dir = None):
         gen = InkedFlow(is_tiny=True, is_preload=True, 
                     is_clean_output = True, is_symetric_ink=False, 
                     is_clipped=True, is_return_rgb=True)
+    elif data_type == 'mnist-fg-fix':
+        gen = MNISTFashionFlow(is_fix_bg = False)
+    elif data_type == 'mnist-fg-fix-v1':
+         gen = MNISTFashionFlow(
+                 is_fix_bg = False,
+                  output_size = 256,
+                 bg_n_range = (5, 15),
+                 int_range = (0.5, 1.0),
+                 max_rotation = 90,
+                 is_v_flip = True
+                 )
+    
+    elif data_type == 'mnist-fg-fix-v2':
+        gen = MNISTFashionFlow(is_fix_bg = False,
+                               output_size = 256,
+                             bg_n_range = (5, 25),
+                             int_range = (1., 1.),
+                             max_rotation = 45,
+                             is_v_flip = False
+                             )
+        
+    elif data_type == 'mnist-bg-fix':
+        gen = MNISTFashionFlow(is_fix_bg = True)
+
     else:
         raise ValueError(data_type)
     
